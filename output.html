@@ -1,0 +1,1144 @@
+分析一下以下代码中最终购车方案，商品卡中互相嵌套的问题：
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甘肃白银新能源SUV购车决策报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#0ea5e9',
+                        accent: '#8b5cf6',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .nav-scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+        
+        .radar-chart-container {
+            position: relative;
+            height: 400px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th, 
+        .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-table thead th {
+            background-color: #f1f5f9;
+            position: sticky;
+            top: 0;
+        }
+        
+        .detail-row {
+            display: none;
+        }
+        
+        .detail-row.active {
+            display: table-row;
+        }
+        
+        .parameter-good {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #047857;
+            font-weight: 600;
+        }
+        
+        .parameter-bad {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #b91c1c;
+            font-weight: 600;
+        }
+        
+        .recommendation-card {
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .recommendation-card:hover {
+            transform: scale(1.02);
+        }
+        
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .radar-chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                    <i class="fa-solid fa-car text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-dark">新能源购车决策</span>
+            </div>
+            
+            <!-- 桌面端导航 -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#demand" class="text-dark hover:text-primary font-medium">需求分析</a>
+                <a href="#comparison" class="text-dark hover:text-primary font-medium">核心对比</a>
+                <a href="#detailed-table" class="text-dark hover:text-primary font-medium">详细参数</a>
+                <a href="#scenario" class="text-dark hover:text-primary font-medium">场景分析</a>
+                <a href="#recommendation" class="text-dark hover:text-primary font-medium">最终推荐</a>
+            </div>
+            
+            <!-- 移动端汉堡菜单 -->
+            <button id="mobile-menu-btn" class="md:hidden text-dark">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg absolute top-full left-0 right-0 py-4 px-4">
+            <div class="flex flex-col space-y-4">
+                <a href="#demand" class="text-dark hover:text-primary font-medium py-2">需求分析</a>
+                <a href="#comparison" class="text-dark hover:text-primary font-medium py-2">核心对比</a>
+                <a href="#detailed-table" class="text-dark hover:text-primary font-medium py-2">详细参数</a>
+                <a href="#scenario" class="text-dark hover:text-primary font-medium py-2">场景分析</a>
+                <a href="#recommendation" class="text-dark hover:text-primary font-medium py-2">最终推荐</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero-gradient pt-28 pb-20 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">甘肃白银新能源SUV购车决策报告</h1>
+                <p class="text-xl mb-8 opacity-90">基于您的工作通勤、冬季气候、非铺装路面等需求，为您提供专业购车建议</p>
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6 mb-8">
+                    <p class="text-lg"><i class="fa-solid fa-user mr-2"></i>单身首辆车 | <i class="fa-solid fa-snowflake mr-2 ml-4"></i>甘肃冬季低温 | <i class="fa-solid fa-road mr-2 ml-4"></i>4公里非铺装路面 | <i class="fa-solid fa-plug mr-2 ml-4"></i>无家充桩</p>
+                    <p class="text-lg mt-3"><i class="fa-solid fa-route mr-2"></i>单程通勤100公里 | <i class="fa-solid fa-wallet mr-2 ml-4"></i>预算15万元 | <i class="fa-solid fa-car-side mr-2 ml-4"></i>SUV优先</p>
+                </div>
+                <a href="#recommendation" class="inline-block bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-opacity-90 transition-all">
+                    <i class="fa-solid fa-star mr-2"></i>查看最终推荐
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 需求拆解与知识科普 -->
+    <section id="demand" class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-dark mb-4">需求分析与选购要点</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">基于甘肃白银的冬季气候、通勤距离和路况特点，我们拆解出以下核心需求维度</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 冬季续航 -->
+                <div class="bg-white rounded-2xl p-6 shadow-md card-hover">
+                    <div class="feature-icon bg-blue-100 text-primary">
+                        <i class="fa-solid fa-snowflake text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">冬季续航能力</h3>
+                    <p class="text-slate-600 mb-4">甘肃白银冬季寒冷，气温可降至-15℃以下，需关注电池低温性能、热管理系统和实际续航达成率。</p>
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-700 mb-2">选购知识：</h4>
+                        <p>磷酸铁锂电池低温性能较差，三元锂电池低温表现更好；热泵空调可显著降低冬季能耗；液冷+预热系统能提升低温续航。</p>
+                    </div>
+                </div>
+                
+                <!-- 安全配置 -->
+                <div class="bg-white rounded-2xl p-6 shadow-md card-hover">
+                    <div class="feature-icon bg-red-100 text-red-500">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">安全性能</h3>
+                    <p class="text-slate-600 mb-4">作为首辆车且需要兼顾家庭出行，主被动安全配置至关重要，尤其是气囊数量、车身结构和电子稳定系统。</p>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-bold text-red-700 mb-2">选购知识：</h4>
+                        <p>关注6气囊以上配置；AEB自动刹车、车道保持等主动安全功能；高强度钢车身比例；ESP车身稳定系统在冰雪路面必不可少。</p>
+                    </div>
+                </div>
+                
+                <!-- 通过性能 -->
+                <div class="bg-white rounded-2xl p-6 shadow-md card-hover">
+                    <div class="feature-icon bg-amber-100 text-amber-600">
+                        <i class="fa-solid fa-road text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">底盘与通过性</h3>
+                    <p class="text-slate-600 mb-4">工作地点有4公里非铺装路面，底盘高度、悬挂系统和通过性配置是关键考量因素。</p>
+                    <div class="bg-amber-50 rounded-lg p-4">
+                        <h4 class="font-bold text-amber-700 mb-2">选购知识：</h4>
+                        <p>离地间隙≥160mm更适合非铺装路面；接近角和离去角影响通过性；独立悬挂提供更好舒适性；陡坡缓降功能在复杂路况很实用。</p>
+                    </div>
+                </div>
+                
+                <!-- 使用成本 -->
+                <div class="bg-white rounded-2xl p-6 shadow-md card-hover">
+                    <div class="feature-icon bg-emerald-100 text-emerald-600">
+                        <i class="fa-solid fa-calculator text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">使用成本</h3>
+                    <p class="text-slate-600 mb-4">无家充桩，依赖小区收费充电(0.8元/度)，需关注电耗水平和充电效率。</p>
+                    <div class="bg-emerald-50 rounded-lg p-4">
+                        <h4 class="font-bold text-emerald-700 mb-2">选购知识：</h4>
+                        <p>百公里电耗≤14kWh更经济；快充时间影响使用便利性；冬季电耗通常增加20-30%；保养成本电动车普遍低于燃油车。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心参数对比 -->
+    <section id="comparison" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-dark mb-4">核心参数对比分析</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">基于您的核心需求，我们对关键指标进行可视化对比</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- 雷达图 -->
+                <div class="bg-slate-50 rounded-2xl p-6 shadow-md">
+                    <h3 class="text-xl font-bold text-dark mb-6 text-center">关键性能雷达图</h3>
+                    <div class="radar-chart-container">
+                        <canvas id="performanceRadar"></canvas>
+                    </div>
+                    <div class="mt-6 text-sm text-slate-600">
+                        <p class="mb-2"><span class="font-bold">注：</span>雷达图评分基于冬季续航能力、安全配置和通过性三大核心指标综合评估</p>
+                        <p>评分越高表示在该维度表现越优秀，更适合您的使用场景</p>
+                    </div>
+                </div>
+                
+                <!-- 参数对比卡片 -->
+                <div>
+                    <div class="bg-slate-50 rounded-2xl p-6 shadow-md mb-8">
+                        <h3 class="text-xl font-bold text-dark mb-6">冬季续航表现对比</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">比亚迪元PLUS</span>
+                                    <span class="font-bold text-primary">90分</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div class="bg-primary h-2.5 rounded-full" style="width: 90%"></div>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-1">热泵空调+直冷直热技术，-15℃续航达成率71.5%</p>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">广汽埃安AION Y</span>
+                                    <span class="font-bold text-primary">85分</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div class="bg-primary h-2.5 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-1">弹匣电池安全防护，-20℃续航达成率65.1%</p>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">比亚迪宋PLUS EV</span>
+                                    <span class="font-bold text-primary">80分</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div class="bg-primary h-2.5 rounded-full" style="width: 80%"></div>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-1">液冷系统，同平台车型实测冬季续航约7折</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-2xl p-6 shadow-md">
+                        <h3 class="text-xl font-bold text-dark mb-6">通过性与安全配置</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-secondary mb-2">200mm</div>
+                                <div class="text-sm text-slate-600">零跑C11底盘高度</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-secondary mb-2">7个</div>
+                                <div class="text-sm text-slate-600">比亚迪元PLUS安全气囊</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-secondary mb-2">171mm</div>
+                                <div class="text-sm text-slate-600">宋Pro DM离地间隙</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-secondary mb-2">4个</div>
+                                <div class="text-sm text-slate-600">创维EV6安全气囊</div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <p class="font-bold text-dark">关键发现：</p>
+                            <p class="text-slate-600">比亚迪元PLUS在安全配置上领先，零跑C11通过性最优，创维EV6在安全配置上相对薄弱</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 综合对比表格 -->
+    <section id="detailed-table" class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-dark mb-4">详细参数对比表</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">包含所有候选车型的完整参数比较，点击"查看详情"获取更多信息</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div class="table-container overflow-x-auto">
+                    <table class="comparison-table w-full">
+                        <thead>
+                            <tr class="bg-slate-50">
+                                <th class="min-w-[200px]">车型</th>
+                                <th>价格</th>
+                                <th>续航(CLTC)</th>
+                                <th>电池容量</th>
+                                <th>离地间隙</th>
+                                <th>安全气囊</th>
+                                <th>百公里电耗</th>
+                                <th>快充时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 比亚迪元PLUS -->
+                            <tr>
+                                <td class="font-bold">比亚迪元PLUS 2025款 智驾版</td>
+                                <td>14.58万</td>
+                                <td class="parameter-good">510km</td>
+                                <td>60.48kWh</td>
+                                <td>161.5mm</td>
+                                <td class="parameter-good">7个</td>
+                                <td class="parameter-good">12.5kWh</td>
+                                <td class="parameter-good">0.5小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-1">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-1" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>71.5%(@-15℃)</p>
+                                            <p><span class="font-medium">低温充电：</span>快充功率100kW</p>
+                                            <p><span class="font-medium">冷启动：</span>-30℃宽温域工作</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>DiPilot 100辅助驾驶(L2级)</p>
+                                            <p><span class="font-medium">被动安全：</span>7安全气囊(含远端气囊)</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>48.38元</p>
+                                            <p><span class="font-medium">百公里电费：</span>10元</p>
+                                            <p><span class="font-medium">口碑：</span>冬季城市通勤7折，高速5折</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- 比亚迪宋PLUS EV -->
+                            <tr>
+                                <td class="font-bold">比亚迪宋PLUS EV 2025款</td>
+                                <td>14.98万</td>
+                                <td class="parameter-good">520km</td>
+                                <td>71.8kWh</td>
+                                <td>166mm</td>
+                                <td class="parameter-good">6个</td>
+                                <td>13.7kWh</td>
+                                <td class="parameter-good">0.5小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-2">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-2" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>70%（参考同平台数据）</p>
+                                            <p><span class="font-medium">低温充电：</span>32分钟(30%-80%@-15℃)</p>
+                                            <p><span class="font-medium">冷启动：</span>20分钟升温26.1℃</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>AEB/车道保持/全景影像标配</p>
+                                            <p><span class="font-medium">被动安全：</span>6安全气囊，高强度车身</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>57.44元</p>
+                                            <p><span class="font-medium">百公里电费：</span>10.96元</p>
+                                            <p><span class="font-medium">口碑：</span>城市400-450公里(8折)，高速300公里(6折)</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- 创维EV6 -->
+                            <tr>
+                                <td class="font-bold">创维EV6 2025款 智驾版 MAX版</td>
+                                <td>13.98万</td>
+                                <td class="parameter-good">520km</td>
+                                <td>65.71kWh</td>
+                                <td>159-177mm</td>
+                                <td class="parameter-bad">4个</td>
+                                <td class="parameter-bad">14.4kWh</td>
+                                <td class="parameter-good">0.13小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-3">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-3" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>60%（参考老款数据）</p>
+                                            <p><span class="font-medium">低温充电：</span>参数缺失</p>
+                                            <p><span class="font-medium">冷启动：</span>参数缺失</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>AEB/车道保持标配</p>
+                                            <p><span class="font-medium">被动安全：</span>4安全气囊（无侧气帘）</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>52.57元</p>
+                                            <p><span class="font-medium">百公里电费：</span>11.52元</p>
+                                            <p><span class="font-medium">口碑：</span>充电桩兼容性优秀</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- 零跑C11 -->
+                            <tr>
+                                <td class="font-bold">零跑C11</td>
+                                <td>约15万</td>
+                                <td class="parameter-good">640km</td>
+                                <td>81.9kWh</td>
+                                <td class="parameter-good">200mm</td>
+                                <td>待确认</td>
+                                <td>约14kWh</td>
+                                <td>0.3小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-4">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-4" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>62%(@-20℃)</p>
+                                            <p><span class="font-medium">低温充电：</span>慢充功率下降明显</p>
+                                            <p><span class="font-medium">冷启动：</span>通过OTA优化</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>参数缺失</p>
+                                            <p><span class="font-medium">被动安全：</span>参数缺失</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>参数缺失</p>
+                                            <p><span class="font-medium">百公里电费：</span>约12元</p>
+                                            <p><span class="font-medium">口碑：</span>青甘大环线充电设施不足</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- 比亚迪宋Pro DM -->
+                            <tr>
+                                <td class="font-bold">比亚迪宋Pro DM 2025款</td>
+                                <td>13.28万</td>
+                                <td class="parameter-bad">115km(纯电)</td>
+                                <td>18.316kWh</td>
+                                <td class="parameter-good">171mm</td>
+                                <td class="parameter-good">6个</td>
+                                <td>参数缺失</td>
+                                <td>0.57小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-5">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-5" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>参数缺失</p>
+                                            <p><span class="font-medium">低温充电：</span>10分钟恢复80%充电能力</p>
+                                            <p><span class="font-medium">冷启动：</span>参数缺失</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>DiPilot 100智能驾驶系统</p>
+                                            <p><span class="font-medium">被动安全：</span>6安全气囊</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>参数缺失</p>
+                                            <p><span class="font-medium">百公里电费：</span>参数缺失</p>
+                                            <p><span class="font-medium">口碑：</span>参数缺失</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- 广汽埃安AION Y -->
+                            <tr>
+                                <td class="font-bold">广汽埃安AION Y Younger</td>
+                                <td>11.98万起</td>
+                                <td class="parameter-bad">430km</td>
+                                <td>49.75kWh</td>
+                                <td>参数缺失</td>
+                                <td class="parameter-bad">4个</td>
+                                <td>12.9kWh</td>
+                                <td>0.5小时</td>
+                                <td>
+                                    <button class="view-detail-btn text-primary font-medium" data-target="detail-6">
+                                        查看详情 <i class="fa-solid fa-chevron-down ml-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="detail-6" class="detail-row">
+                                <td colspan="9" class="bg-slate-50 p-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h4 class="font-bold mb-2">冬季性能</h4>
+                                            <p><span class="font-medium">续航达成率：</span>65.1%(@-20℃)</p>
+                                            <p><span class="font-medium">低温充电：</span>30分钟(22%-60%@-20℃)</p>
+                                            <p><span class="font-medium">冷启动：</span>空调稳定运行</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold mb-2">安全配置</h4>
+                                            <p><span class="font-medium">主动安全：</span>ESP/胎压监测标配</p>
+                                            <p><span class="font-medium">被动安全：</span>4安全气囊</p>
+                                        </div>
+                                        </div>
+                                            <h4 class="font-bold mb-2">使用成本</h4>
+                                            <p><span class="font-medium">单次充满：</span>参数缺失</p>
+                                            <p><span class="font-medium">百公里电费：</span>约10.32元</p>
+                                            <p><span class="font-medium">口碑：</span>冬季开空调约300km（30%衰减）</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 场景化分析 -->
+    <section id="scenario" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-dark mb-4">场景化需求分析</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">针对您的具体使用场景，深入分析各车型表现</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 冬季通勤场景 -->
+                <div class="bg-blue-50 rounded-2xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-snowflake text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark">冬季通勤场景</h3>
+                    </div>
+                    <p class="text-slate-700 mb-4">甘肃白银冬季寒冷，单程100公里通勤对续航要求高：</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                            <span>比亚迪元PLUS：热泵空调+直冷直热技术，-15℃续航357km，完全满足需求</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                            <span>比亚迪宋PLUS EV：实测冬季城市续航400km，可覆盖通勤需求</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-1 mr-2"></i>
+                            <span>广汽埃安AION Y：冬季续航约280km，往返200km存在里程焦虑风险</span>
+                        </li>
+                    </ul>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="font-bold text-blue-700 mb-2">建议：</p>
+                        <p>选择配备热泵空调和高效热管理系统的车型，确保冬季续航衰减控制在30%以内</p>
+                    </div>
+                </div>
+                
+                <!-- 非铺装路面场景 -->
+                <div class="bg-amber-50 rounded-2xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-amber-500 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-road text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark">非铺装路面场景</h3>
+                    </div>
+                    <p class="text-slate-700 mb-4">工作地点4公里非铺装路面，底盘高度和通过性至关重要：</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-amber-500 mt-1 mr-2"></i>
+                            <span>零跑C11：200mm离地间隙，通过性最优，最适合复杂路况</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-amber-500 mt-1 mr-2"></i>
+                            <span>比亚迪宋Pro DM：171mm离地间隙，通过性良好</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-1 mr-2"></i>
+                            <span>比亚迪元PLUS：161.5mm离地间隙，悬架偏舒适，坑洼路滤震一般</span>
+                        </li>
+                    </ul>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="font-bold text-amber-700 mb-2">建议：</p>
+                        <p>优先选择离地间隙≥165mm的SUV车型，关注接近角和离去角参数</p>
+                    </div>
+                </div>
+                
+                <!-- 使用成本场景 -->
+                <div class="bg-emerald-50 rounded-2xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-calculator text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark">使用成本场景</h3>
+                    </div>
+                    <p class="text-slate-700 mb-4">无家充桩，依赖小区充电(0.8元/度)，每月通勤1600公里：</p>
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="text-center bg-white rounded-lg py-3">
+                            <div class="text-lg font-bold text-emerald-600">比亚迪元PLUS</div>
+                            <div class="text-2xl font-bold mt-1">160元</div>
+                            <div class="text-sm text-slate-600">月电费</div>
+                        </div>
+                        <div class="text-center bg-white rounded-lg py-3">
+                            <div class="text-lg font-bold text-emerald-600">比亚迪宋PLUS</div>
+                            <div class="text-2xl font-bold mt-1">175元</div>
+                            <div class="text-sm text-slate-600">月电费</div>
+                        </div>
+                        <div class="text-center bg-white rounded-lg py-3">
+                            <div class="text-lg font-bold text-emerald-600">燃油车</div>
+                            <div class="text-2xl font-bold mt-1">1280元</div>
+                            <div class="text-sm text-slate-600">月油费</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="font-bold text-emerald-700 mb-2">发现：</p>
+                        <p>所有新能源车使用成本均远低于燃油车，电耗差异对总成本影响有限</p>
+                    </div>
+                </div>
+                
+                <!-- 安全与空间场景 -->
+                <div class="bg-red-50 rounded-2xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-red-500 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-shield-halved text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark">安全与空间需求</h3>
+                    </div>
+                    <p class="text-slate-700 mb-4">单身首辆车兼顾家庭出行，安全与空间同样重要：</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>比亚迪元PLUS：7安全气囊(含远端气囊)，L2级辅助驾驶</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>零跑C11：2930mm超长轴距，提供宽敞乘坐空间</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1 mr-2"></i>
+                            <span>创维EV6：仅4安全气囊，无侧气帘，被动安全不足</span>
+                        </li>
+                    </ul>
+                    <div class="bg-white rounded-lg p-4">
+                        <p class="font-bold text-red-700 mb-2">建议：</p>
+                        <p>优先选择配备6气囊以上和L2级辅助驾驶的车型，轴距≥2750mm可保证舒适空间</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 淘汰说明 -->
+    <section class="py-16 bg-rose-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-dark mb-4">淘汰车型说明</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">以下车型因不满足核心需求被淘汰，但完整数据仍供参考</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <!-- 创维EV6 -->
+                    <div class="border border-slate-200 rounded-xl p-5">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold">创维EV6 2025款</h3>
+                            <span class="bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-sm">淘汰</span>
+                        </div>
+                        <div class="flex items-center text-rose-600 mb-3">
+                            <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                            <p class="font-medium">淘汰原因：安全配置不足</p>
+                        </div>
+                        <p class="text-slate-700">仅配备4安全气囊且无侧气帘，被动安全性能不足，不符合"安全第一"的核心需求。虽然价格较低(13.98万)，但在甘肃冬季复杂路况下安全保障不足。</p>
+                    </div>
+                    
+                    <!-- 广汽埃安AION Y -->
+                    <div class="border border-slate-200 rounded-xl p-5">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold">广汽埃安AION Y Younger</h3>
+                            <span class="bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-sm">淘汰</span>
+                        </div>
+                        <div class="flex items-center text-rose-600 mb-3">
+                            <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                            <p class="font-medium">淘汰原因：续航不足</p>
+                        </div>
+                        <p class="text-slate-700">CLTC续航430km，冬季实际续航仅约280km，无法满足单程100公里的通勤需求（往返200km+损耗）。尽管价格最低(11.98万起)，但存在严重里程焦虑风险。</p>
+                    </div>
+                    
+                    <!-- 说明 -->
+                    <div class="md:col-span-2 bg-slate-50 p-5 rounded-lg">
+                        <div class="flex">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fa-solid fa-info-circle text-blue-500 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-slate-700">淘汰说明：以上车型因不满足一项或多项核心需求（冬季续航、安全配置、通过性）被淘汰，但仍包含在完整对比表中供参考。淘汰不影响其在参数对比中的展示。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最终推荐 -->
+    <section id="recommendation" class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-dark mb-4">最终购车推荐方案</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">根据不同使用偏好，我们提供三套定制化购车方案</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 推荐方案一 -->
+                <div class="recommendation-card bg-white rounded-2xl shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mb-2">首推方案</span>
+                            <h3 class="text-2xl font-bold text-dark">冬季性能优先型</h3>
+                        </div>
+                        <div class="bg-blue-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-1 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center mb-6 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">比亚迪元PLUS 2025款</h4>
+                            <p class="text-blue-600 font-medium">14.58万元</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">核心优势：</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">顶级冬季性能：</span>热泵空调+直冷直热技术，-15℃续航达成率71.5%</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">安全配置拉满：</span>7安全气囊（含同级罕见远端气囊）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">使用成本低：</span>百公里电耗仅12.5kWh，月通勤电费约160元</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">适合人群：</h4>
+                        <p class="text-slate-700">最关注冬季续航和安全性能，愿意为顶级配置支付合理溢价，对通过性要求中等</p>
+                    </div>
+                    
+                    <div class="bg-amber-50 rounded-lg p-4">
+                        <h4 class="font-bold text-amber-700 mb-2">需要妥协：</h4>
+                        <p>离地间隙161.5mm，非铺装路面通过性一般；后排空间略小于竞争对手</p>
+                    </div>
+                </div>
+                
+                <!-- 推荐方案二 -->
+                <div class="recommendation-card bg-white rounded-2xl shadow-md p-6 border-l-4 border-secondary">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="inline-block bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm mb-2">均衡方案</span>
+                            <h3 class="text-2xl font-bold text-dark">综合全能型</h3>
+                        </div>
+                        <div class="bg-secondary text-white w-12 h-12 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-2 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center mb-6 p-4 bg-cyan-50 rounded-lg">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">比亚迪宋PLUS EV 2025款</h4>
+                            <p class="text-cyan-600 font-medium">14.98万元</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">核心优势：</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">均衡全能：</span>续航、安全、通过性均达到优秀水平</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">通过性更好：</span>166mm离地间隙，接近角19°/离去角22°</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">空间表现佳：</span>2765mm轴距，后备箱空间更大</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">适合人群：</h4>
+                        <p class="text-slate-700">追求全面均衡表现，对空间和通过性有更高要求，能接受冬季续航略低于方案一</p>
+                    </div>
+                    
+                    <div class="bg-amber-50 rounded-lg p-4">
+                        <h4 class="font-bold text-amber-700 mb-2">需要妥协：</h4>
+                        <p>冬季续航表现略逊于元PLUS；价格高出4000元</p>
+                    </div>
+                </div>
+                
+                <!-- 推荐方案三 -->
+                <div class="recommendation-card bg-white rounded-2xl shadow-md p-6 border-l-4 border-purple-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm mb-2">经济方案</span>
+                            <h3 class="text-2xl font-bold text-dark">无焦虑经济型</h3>
+                        </div>
+                        <div class="bg-purple-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-3 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center mb-6 p-4 bg-purple-50 rounded-lg">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">比亚迪宋Pro DM 2025款</h4>
+                            <p class="text-purple-600 font-medium">13.28万元</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">核心优势：</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">无里程焦虑：</span>插电混动设计，冬季可启动发动机取暖</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">通过性最佳：</span>171mm离地间隙，非铺装路面表现优异</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span><span class="font-medium">价格优势：</span>比纯电版本低1.7万元</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-dark mb-3">适合人群：</h3>
+                        <p class="text-slate-700">预算敏感型用户，经常面临极端天气，对纯电续航有顾虑，需要最佳通过性</p>
+                    </div>
+                    
+                    <div class="bg-amber-50 rounded-lg p-4">
+                        <h4 class="font-bold text-amber-700 mb-2">需要妥协：</h4>
+                        <p>纯电续航仅115km（冬季可能降至80km），通勤需使用燃油；后期保养成本高于纯电</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 购买建议 -->
+            <div class="mt-16 bg-white rounded-2xl shadow-md p-8 max-w-4xl mx-auto">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mt-1">
+                        <i class="fa-solid fa-lightbulb text-yellow-500 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold text-dark mb-4">购车最终建议</h3>
+                        <p class="text-slate-700 mb-4">基于您的需求（甘肃白银冬季、长距离通勤、非铺装路面）和预算（15万元），我们强烈推荐：</p>
+                        <ol class="list-decimal pl-6 space-y-3 mb-4">
+                            <li><span class="font-bold">首选比亚迪元PLUS</span> - 冬季性能最优，安全配置顶级，完全满足通勤需求</li>
+                            <li><span class="font-bold">次选比亚迪宋PLUS EV</span> - 通过性更好，空间更大，适合家庭出行</li>
+                            <li><span class="font-bold">备选比亚迪宋Pro DM</span> - 混动无里程焦虑，通过性最佳，预算最低</li>
+                        </ol>
+                        <p class="text-slate-700"><span class="font-bold">特别提示：</span>建议在冬季试驾，实地体验低温启动和暖风效果；同时确认当地比亚迪售后服务网点覆盖情况</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <div class="flex justify-center mb-6">
+                    <div class="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
+                        <i class="fa-solid fa-car text-white text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-lg mb-4">新能源SUV购车决策报告</p>
+                <p class="text-slate-300 max-w-2xl mx-auto">本报告基于您的具体需求场景和客观数据生成，旨在提供专业、中立的购车建议。数据来源包括厂商公开参数、第三方测试及用户口碑评价，数据截止2023年10月。</p>
+                <div class="mt-8 text-slate-400 text-sm">
+                    <p>© 2023 新能源购车决策分析中心 | 专业购车建议服务</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+            }
+        });
+        
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 表格详情展开/收起
+        const detailButtons = document.querySelectorAll('.view-detail-btn');
+        
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetRow = document.getElementById(targetId);
+                
+                // 切换显示
+                targetRow.classList.toggle('active');
+                
+                // 更新按钮图标
+                const icon = this.querySelector('i');
+                if (targetRow.classList.contains('active')) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+        
+        // 雷达图数据与配置
+        const radarData = {
+            labels: ['冬季续航', '安全配置', '通过性'],
+            datasets: [
+                {
+                    label: '比亚迪元PLUS',
+                    data: [90, 95, 75],
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgb(37, 99, 235)',
+                    pointBackgroundColor: 'rgb(37, 99, 235)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(37, 99, 235)'
+                },
+                {
+                    label: '比亚迪宋PLUS EV',
+                    data: [80, 90, 85],
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: 'rgb(14, 165, 233)',
+                    pointBackgroundColor: 'rgb(14, 165, 233)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(14, 165, 233)'
+                },
+                {
+                    label: '创维EV6',
+                    data: [60, 70, 80],
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    borderColor: 'rgb(139, 92, 246)',
+                    pointBackgroundColor: 'rgb(139, 92, 246)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(139, 92, 246)'
+                },
+                {
+                    label: '零跑C11',
+                    data: [62, 75, 85],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: 'rgb(16, 185, 129)',
+                    pointBackgroundColor: 'rgb(16, 185, 129)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(16, 185, 129)'
+                },
+                {
+                    label: '比亚迪宋Pro DM',
+                    data: [85, 85, 80],
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    borderColor: 'rgb(245, 158, 11)',
+                    pointBackgroundColor: 'rgb(245, 158, 11)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(245, 158, 11)'
+                },
+                {
+                    label: '广汽埃安AION Y',
+                    data: [85, 80, 70],
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    borderColor: 'rgb(239, 68, 68)',
+                    pointBackgroundColor: 'rgb(239, 68, 68)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(239, 68, 68)'
+                }
+            ]
+        };
+        
+        // 雷达图配置
+        const radarConfig = {
+            type: 'radar',
+            data: radarData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}分`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // 渲染雷达图
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const radarCtx = document.getElementById('performanceRadar').getContext('2d');
+            new Chart(radarCtx, radarConfig);
+        });
+    </script>
+</body>
+</html>
