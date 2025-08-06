@@ -4,6 +4,7 @@ HTML修复Agent测试脚本
 """
 
 import os
+import time
 from htmlagent import HTMLAgent
 
 def create_test_html():
@@ -69,6 +70,7 @@ def main():
         
         # 修复HTML文件
         print("🔍 开始修复HTML文件...")
+        
         result = agent.repair_html('input.html', 'output.html')
         
         if result["success"]:
@@ -76,32 +78,9 @@ def main():
             print(f"📁 输入文件: {result['input_file']}")
             print(f"📁 输出文件: {result['output_file']}")
             
-            # 显示修复前后的对比
-            print("\n📊 修复前后对比:")
-            print("=" * 50)
-            
-            with open('input.html', 'r', encoding='utf-8') as f:
-                original_content = f.read()
-            
-            with open('output.html', 'r', encoding='utf-8') as f:
-                repaired_content = f.read()
-            
-            print("🔴 修复前的问题:")
-            print("1. 第12行: 自闭合标签错误 - <div class=\"bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16\" />")
-            print("2. 第22行: 标签名错误 - div> 应该是 <div>")
-            
-            print("\n🟢 修复后的结果:")
-            print("1. 第12行: 已修正为 <div class=\"bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16\"></div>")
-            print("2. 第22行: 已修正为 <div>")
-            
-            # 显示具体的修复内容
-            print("\n📄 修复后的文件内容预览:")
-            print("-" * 30)
-            with open('output.html', 'r', encoding='utf-8') as f:
-                lines = f.readlines()
-                for i, line in enumerate(lines, 1):
-                    if i in [12, 22]:  # 显示修复的关键行
-                        print(f"第{i:2d}行: {line.rstrip()}")
+            # 显示计时信息
+            if "model_call_time" in result:
+                print(f"🤖 大模型调用耗时: {result['model_call_time']:.2f}秒")
             
         else:
             print("❌ HTML修复失败:")

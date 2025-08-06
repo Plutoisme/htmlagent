@@ -1,4 +1,5 @@
 import os
+import time
 from typing import Dict, Any, Type
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -113,15 +114,25 @@ HTML代码（行号和内容）：
 
 请分析这些代码中的错误，并使用 `modify_file_tool` 工具进行修复。工具调用时请使用正确的文件路径：{target_file}"""
             
+            # 开始计时大模型调用
+            print("🤖 开始大模型调用...")
+            start_time = time.time()
+            
             # 执行Agent
             result = self.agent_executor.invoke({"input": message})
+            
+            # 结束计时
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"🤖 大模型调用完成，耗时: {elapsed_time:.2f}秒")
             
             return {
                 "success": True,
                 "message": "HTML修复完成",
                 "result": result,
                 "input_file": input_file,
-                "output_file": target_file
+                "output_file": target_file,
+                "model_call_time": elapsed_time
             }
             
         except Exception as e:
