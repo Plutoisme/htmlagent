@@ -53,10 +53,10 @@ class SiliconFlowModel:
                         }
                     ],
                     temperature=0.6,
-                    max_tokens=52509,  # 根据图片中的配置
+                    max_tokens=60000,  # 根据图片中的配置
                     top_p=0.95,
                     frequency_penalty=0.0,
-                    thinking_budget=17996,  # 根据图片中的配置
+                    thinking_budget=20000,  # 根据图片中的配置
                     stream=True  # 启用流式输出
                 )
             except Exception as e:
@@ -73,7 +73,7 @@ class SiliconFlowModel:
                             }
                         ],
                         temperature=0.6,
-                        max_tokens=52509,
+                        max_tokens=60000,
                         top_p=0.95,
                         stream=True  # 启用流式输出
                     )
