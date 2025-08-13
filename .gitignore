@@ -1,4 +1,4 @@
 .env
-*.html
 __pycache__
 .DS_Store
+.backup
