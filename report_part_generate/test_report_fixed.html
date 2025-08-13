@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-bind="title">智能商品推荐报告</title>
+  <meta name="description" content="一个尽可能通用的可配置购物决策报告模板。支持多品类、多属性、多产品数量、可视化对比与详情展开。">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81'
+            },
+            neutral: {
+              25: '#fafafa'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,.08)',
+            elevated: '0 12px 40px rgba(2,6,23,.18)'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <style>
+    .glass { background: rgba(255,255,255,.78); backdrop-filter: blur(10px); }
+    .gradient-hero {
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(99,102,241,.18), transparent 60%),
+                  radial-gradient(1000px 500px at 90% 10%, rgba(16,185,129,.14), transparent 60%),
+                  linear-gradient(180deg, #0b1220 0%, #0b1220 50%, #0f172a 100%);
+    }
+    .nav-hidden { transform: translateY(-100%); }
+    .table-sticky th { position: sticky; top: 64px; z-index: 10; background: #0f172a; }
+    .scrollbar-thin::-webkit-scrollbar { height: .5rem; width: .5rem; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #e5e7eb; }
+    .tag { display: inline-flex; gap: .5rem; align-items: center; background: #f3f4f6; color: #111827; padding: .25rem .6rem; border-radius: 999px; font-size: .75rem; }
+    .badge { display: inline-flex; align-items: center; padding: .25rem .55rem; border-radius: .5rem; font-size: .75rem; font-weight: 600; }
+    .chip { display: inline-flex; align-items: center; gap: .5rem; background: #0b1220; color: #e6e9ff; padding: .35rem .75rem; border-radius: 999px; border: 1px solid rgba(99,102,241,.35); }
+    .accordion-enter { animation: fadein .25s ease both; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+  </style>
+
+        <script>
+        window.REPORT_DATA = {
+  "meta": {
+    "title": "智能商品推荐报告",
+    "description": "基于用户需求和产品数据的个性化推荐分析",
+    "keywords": "商品推荐,需求分析,产品对比,智能分析"
+  },
+  "nav": [
+    {
+      "title": "需求分析",
+      "href": "#requirements"
+    },
+    {
+      "title": "产品对比",
+      "href": "#products"
+    },
+    {
+      "title": "场景分析",
+      "href": "#scenarios"
+    },
+    {
+      "title": "推荐方案",
+      "href": "#recommendations"
+    }
+  ],
+  "hero": {
+    "title": "智能商品推荐报告",
+    "subtitle": "基于您的具体需求，为您精心挑选最适合的商品",
+    "chips": [
+      {
+        "text": "个性化推荐",
+        "color": "primary"
+      },
+      {
+        "text": "数据驱动",
+        "color": "success"
+      },
+      {
+        "text": "客观分析",
+        "color": "info"
+      }
+    ],
+    "cta": null,
+    "stats": [
+      {
+        "label": "分析产品",
+        "value": "6"
+      },
+      {
+        "label": "关键维度",
+        "value": "4"
+      },
+      {
+        "label": "推荐方案",
+        "value": "3"
+      }
+    ],
+    "priorityBadge": null,
+    "progressBars": [],
+    "note": null
+  },
+  "graphInsights": {
+    "dimensions": [
+      {
+        "icon": "fa-coins",
+        "title": "预算约束",
+        "description": "在预算范围内选择最优配置，平衡性能、配置和价格"
+      },
+      {
+        "icon": "fa-cogs",
+        "title": "功能性能",
+        "description": "产品核心功能的实现程度和性能表现"
+      }
+    ],
+    "knowledge": null,
+    "flow": null
+  },
+  "decisionFactors": [
+    {
+      "icon": "fa-cogs",
+      "title": "核心功能",
+      "description": "产品主要功能的实现程度和性能表现"
+    },
+    {
+      "icon": "fa-star",
+      "title": "品质水平",
+      "description": "产品的材质、工艺和整体质量水平"
+    },
+    {
+      "icon": "fa-coins",
+      "title": "性价比",
+      "description": "价格与配置的平衡关系，物有所值程度"
+    },
+    {
+      "icon": "fa-home",
+      "title": "适用性",
+      "description": "产品对用户需求的匹配程度和使用便利性"
+    }
+  ],
+  "products": [
+    {
+      "id": "比亚迪宋plus-ev-2025款-智驾版-520km豪华型",
+      "name": "比亚迪宋PLUS EV 2025款 智驾版 520KM豪华型",
+      "price": 14.98,
+      "currency": "CNY",
+      "type": "纯电动SUV",
+      "tags": [
+        "热管理系统",
+        "磷酸铁锂电池",
+        "安全配置"
+      ],
+      "highlights": [
+        "冬季性能优化",
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "纯电动SUV",
+        "CLTC续航": "520km",
+        "电池类型": "磷酸铁锂电池",
+        "电池容量": "71.8kWh",
+        "离地间隙": "166mm",
+        "快充时间": "0.5小时(30%-80%)",
+        "电机功率": "150kW",
+        "热管理系统": "液冷（未明确提及电池预热）",
+        "电耗CLTC": "13.7kWh/100km",
+        "冬季性能_实际续航达成率": "70%（参考同平台宋L数据）",
+        "冬季性能_低温充电效率": "32分钟(30%-80%@-15℃)",
+        "冬季性能_冷启动可靠性": "20分钟升温26.1℃",
+        "安全配置_主动安全": "AEB/车道保持/全景影像等全系标配",
+        "安全配置_被动安全": "6安全气囊，高强度车身",
+        "安全配置_通过性": "ESP/陡坡缓降标配",
+        "使用成本_单次充满费用": "57.44元(0.8元/度)",
+        "使用成本_百公里电费": "10.96元",
+        "使用成本_相比燃油车节省": "82.7%"
+      },
+      "details": {
+        "pros": [],
+        "cons": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "比亚迪元plus-2025款-智驾版-510km-卓越型",
+      "name": "比亚迪元PLUS 2025款 智驾版 510KM 卓越型",
+      "price": 14.58,
+      "currency": "CNY",
+      "type": "纯电动SUV",
+      "tags": [
+        "热管理系统",
+        "磷酸铁锂刀片电池",
+        "安全配置"
+      ],
+      "highlights": [
+        "冬季性能优化",
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "纯电动SUV",
+        "CLTC续航": "510km",
+        "电池类型": "磷酸铁锂刀片电池",
+        "电池容量": "60.48kWh",
+        "离地间隙": "161.5mm",
+        "快充时间": "0.5小时(30%-80%)",
+        "电机功率": "150kW",
+        "热管理系统": "热泵空调+直冷直热技术",
+        "百公里电耗": "12.5kWh/100km",
+        "冬季性能_实际续航达成率": "71.5%(@-15℃)",
+        "冬季性能_低温充电效率": "快充功率100kW",
+        "冬季性能_冷启动可靠性": "-30℃宽温域工作",
+        "安全配置_主动安全": "DiPilot 100辅助驾驶（L2级）",
+        "安全配置_被动安全": "7安全气囊（含同级罕见远端气囊）",
+        "安全配置_通过性": "ESP/陡坡缓降标配",
+        "使用成本_单次充满费用": "48.38元(0.8元/度)",
+        "使用成本_百公里电费": "10元"
+      },
+      "details": {
+        "pros": [],
+        "cons": [
+          "非铺装路面: 悬架偏舒适，坑洼路滤震一般"
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "创维ev6-2025款-智驾版-max版",
+      "name": "创维EV6 2025款 智驾版 MAX版",
+      "price": 13.98,
+      "currency": "CNY",
+      "type": "纯电动SUV",
+      "tags": [
+        "三元锂电池",
+        "安全配置"
+      ],
+      "highlights": [
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "纯电动SUV",
+        "CLTC续航": "520km",
+        "电池类型": "三元锂电池",
+        "电池容量": "65.71kWh",
+        "离地间隙": "159mm(满载)/177mm(空载)",
+        "快充时间": "0.13小时(30%-80%)",
+        "电机功率": "250kW",
+        "百公里电耗": "14.4kWh/100km",
+        "安全配置_主动安全": "AEB/车道保持标配",
+        "安全配置_被动安全": "4安全气囊（无侧气帘）",
+        "安全配置_通过性": "ESP标配，陡坡缓降待确认",
+        "使用成本_单次充满费用": "52.57元(0.8元/度)",
+        "使用成本_百公里电费": "11.52元"
+      },
+      "details": {
+        "pros": [
+          "充电便利性: 充电桩兼容性优秀"
+        ],
+        "cons": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "零跑c11",
+      "name": "零跑C11",
+      "price": 15.0,
+      "currency": "CNY",
+      "type": "纯电动SUV",
+      "tags": [
+        "热管理系统",
+        "三元锂/磷酸铁锂(不同版本)",
+        "安全配置"
+      ],
+      "highlights": [
+        "冬季性能优化",
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "纯电动SUV",
+        "CLTC续航": "640km(纯电版)",
+        "电池类型": "三元锂/磷酸铁锂(不同版本)",
+        "电池容量": "81.9kWh(最大)",
+        "快充时间": "18分钟(30%-80%纯电版)",
+        "热管理系统": "智能温控系统",
+        "冬季性能_实际续航达成率": "62%(@-20℃)",
+        "冬季性能_低温充电效率": "慢充功率下降明显",
+        "冬季性能_冷启动可靠性": "通过OTA优化",
+        "安全配置_通过性": "陡坡缓降标配",
+        "使用成本_百公里电费": "约12元"
+      },
+      "details": {
+        "pros": [],
+        "cons": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "比亚迪宋pro-dm-2025款-第二代智驾版-dm-i-115km-卓越型",
+      "name": "比亚迪宋Pro DM 2025款 第二代智驾版 DM-i 115KM 卓越型",
+      "price": 13.28,
+      "currency": "CNY",
+      "type": "插电式混合动力SUV",
+      "tags": [
+        "热管理系统",
+        "磷酸铁锂电池",
+        "安全配置"
+      ],
+      "highlights": [
+        "冬季性能优化",
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "插电式混合动力SUV",
+        "纯电续航": "115km",
+        "电池类型": "磷酸铁锂电池",
+        "电池容量": "18.316kWh",
+        "离地间隙": "171mm",
+        "快充时间": "34分钟(30%-80%)",
+        "电机功率": "120kW",
+        "热管理系统": "待确认",
+        "冬季性能_低温充电效率": "10分钟恢复80%充电能力",
+        "安全配置_主动安全": "DiPilot 100智能驾驶系统",
+        "安全配置_被动安全": "6安全气囊",
+        "安全配置_通过性": "ESP/陡坡缓降待确认",
+        "使用成本_快充功率": "18kW"
+      },
+      "details": {
+        "pros": [],
+        "cons": [],
+        "notes": []
+      }
+    },
+    {
+      "id": "广汽埃安aion-y-younger",
+      "name": "广汽埃安AION Y Younger",
+      "price": 11.98,
+      "currency": "CNY",
+      "type": "纯电动SUV",
+      "tags": [
+        "热管理系统",
+        "磷酸铁锂弹匣电池",
+        "安全配置"
+      ],
+      "highlights": [
+        "冬季性能优化",
+        "安全配置完善",
+        "使用成本低"
+      ],
+      "attributes": {
+        "车型类型": "纯电动SUV",
+        "CLTC续航": "430km",
+        "电池类型": "磷酸铁锂弹匣电池",
+        "电池容量": "49.75kWh",
+        "快充时间": "30分钟(30%-80%)",
+        "电机功率": "100kW",
+        "热管理系统": "弹匣电池安全防护",
+        "百公里电耗": "12.9kWh",
+        "冬季性能_实际续航达成率": "65.1%(@-20℃)",
+        "冬季性能_低温充电效率": "30分钟(22%-60%@-20℃)",
+        "冬季性能_冷启动可靠性": "空调稳定运行",
+        "安全配置_主动安全": "ESP/胎压监测标配",
+        "安全配置_被动安全": "4安全气囊",
+        "使用成本_百公里电费": "约10.32元"
+      },
+      "details": {
+        "pros": [],
+        "cons": [],
+        "notes": []
+      }
+    }
+  ],
+  "charts": [
+    {
+      "id": "price-comparison",
+      "title": "价格对比",
+      "note": "",
+      "type": "bar",
+      "metricKey": "price",
+      "metricKeys": null,
+      "unit": "万元",
+      "suggestedMax": 20,
+      "stepSize": null,
+      "reverse": false
+    },
+    {
+      "id": "core-attribute-comparison",
+      "title": "标称续航对比",
+      "note": "",
+      "type": "bar",
+      "metricKey": "CLTC续航",
+      "metricKeys": null,
+      "unit": "km",
+      "suggestedMax": 700,
+      "stepSize": 100,
+      "reverse": false
+    }
+  ],
+  "table": {
+    "title": "产品对比表",
+    "notes": [
+      "数据来源于官方参数和用户评价"
+    ],
+    "columns": [
+      {
+        "key": "name",
+        "label": "产品名称",
+        "source": "name"
+      },
+      {
+        "key": "price",
+        "label": "价格",
+        "source": "price",
+        "formatter": "currency"
+      },
+      {
+        "key": "type",
+        "label": "核心特性",
+        "source": "type"
+      },
+      {
+        "key": "recommendation",
+        "label": "推荐指数",
+        "source": "recommendation"
+      }
+    ],
+    "highlightRules": {},
+    "actions": {}
+  },
+  "scenarios": [
+    {
+      "icon": "fa-home",
+      "title": "日常使用场景",
+      "bullets": [
+        "考虑产品的核心功能和实用性",
+        "关注产品的耐用性和维护便利性",
+        "评估产品的使用成本"
+      ]
+    },
+    {
+      "icon": "fa-star",
+      "title": "高品质需求场景",
+      "bullets": [
+        "关注产品的材质和工艺水平",
+        "考虑品牌信誉和售后服务",
+        "评估产品的长期价值"
+      ]
+    },
+    {
+      "icon": "fa-dollar-sign",
+      "title": "性价比优先场景",
+      "bullets": [
+        "在预算范围内选择最优配置",
+        "平衡价格与功能需求",
+        "考虑产品的投资回报"
+      ]
+    },
+    {
+      "icon": "fa-cog",
+      "title": "技术性能场景",
+      "bullets": [
+        "关注产品的核心技术指标",
+        "评估产品的创新程度",
+        "考虑产品的技术成熟度"
+      ]
+    }
+  ],
+  "elimination": [
+    {
+      "title": "性能不足产品",
+      "level": "淘汰",
+      "icon": "fa-times",
+      "bullets": [
+        "综合评分较低",
+        "关键性能指标不达标",
+        "性价比相对较低"
+      ]
+    },
+    {
+      "title": "配置不匹配产品",
+      "level": "不推荐",
+      "icon": "fa-exclamation-triangle",
+      "bullets": [
+        "功能配置与需求不匹配",
+        "使用场景限制较多",
+        "维护成本较高"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "title": "最佳选择",
+      "badge": {
+        "text": "推荐",
+        "tone": "primary",
+        "icon": "fa-crown"
+      },
+      "productId": "比亚迪宋plus-ev-2025款-智驾版-520km豪华型",
+      "fit": "综合评分最高(136分)，各项性能均衡",
+      "reasons": [
+        "性能表现优秀",
+        "性价比高",
+        "配置完善"
+      ],
+      "tradeoffs": [
+        "可能存在某些方面的不足",
+        "价格相对较高"
+      ]
+    },
+    {
+      "title": "备选方案",
+      "badge": {
+        "text": "备选",
+        "tone": "success",
+        "icon": "fa-star"
+      },
+      "productId": "比亚迪元plus-2025款-智驾版-510km-卓越型",
+      "fit": "性能良好(136分)，可作为备选",
+      "reasons": [
+        "性能表现良好",
+        "价格合理",
+        "配置适中"
+      ],
+      "tradeoffs": [
+        "相比最佳选择略有不足",
+        "某些功能可能不够完善"
+      ]
+    },
+    {
+      "title": "经济型选择",
+      "badge": {
+        "text": "经济",
+        "tone": "info",
+        "icon": "fa-coins"
+      },
+      "productId": "创维ev6-2025款-智驾版-max版",
+      "fit": "性价比突出(136分)，适合预算有限用户",
+      "reasons": [
+        "价格实惠",
+        "基本功能齐全",
+        "维护成本低"
+      ],
+      "tradeoffs": [
+        "高端功能可能缺失",
+        "性能相对较低"
+      ]
+    }
+  ]
+};
+        </script>
+        </head>
+<body class="bg-neutral-25 text-slate-900 antialiased selection:bg-primary-600 selection:text-white">
+
+  <!-- 顶部导航（根据配置自动渲染） -->
+  <header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-transform duration-300">
+    <div class="glass shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="#top" class="flex items-center gap-3 group">
+            <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-primary-500 to-emerald-500 text-white grid place-items-center shadow">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+              <div id="brandTitle" class="text-slate-900 font-semibold tracking-wide">智能商品推荐报告</div>
+              <div id="brandSub" class="text-xs text-slate-600">可配置 · 可扩展</div>
+            </div>
+          </a>
+          <nav id="desktopNav" class="hidden md:flex items-center gap-6 text-slate-700"><a href="#needs" class="hover:text-primary-700 transition-colors">需求分析</a><a href="#table" class="hover:text-primary-700 transition-colors">产品对比</a><a href="#scenarios" class="hover:text-primary-700 transition-colors">场景分析</a><a href="#final-reco" class="hover:text-primary-700 transition-colors">推荐方案</a></nav>
+          <button id="menuBtn" class="md:hidden h-10 w-10 rounded-lg bg-white text-slate-700 grid place-items-center border border-slate-200">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-slate-200 bg-white">
+        <div id="mobileNav" class="px-4 py-3 space-y-1 text-slate-800"><a href="#needs" class="block py-2">需求分析</a><a href="#table" class="block py-2">产品对比</a><a href="#scenarios" class="block py-2">场景分析</a><a href="#final-reco" class="block py-2">推荐方案</a></div>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" class="pt-16">
+    <!-- Hero -->
+    <section id="hero" class="gradient-hero text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <div id="heroChips" class="flex flex-wrap gap-2 mb-4"><span class="chip"><i class="fa-solid fa-circle text-primary-300"></i>个性化推荐</span><span class="chip"><i class="fa-solid fa-circle text-primary-300"></i>数据驱动</span><span class="chip"><i class="fa-solid fa-circle text-primary-300"></i>客观分析</span></div>
+            <h1 id="heroTitle" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">智能商品推荐报告</h1>
+            <p id="heroSubtitle" class="text-white/80 leading-relaxed mt-4">
+              基于您的具体需求，为您精心挑选最适合的商品
+            </p>
+            <div class="flex flex-wrap items-center gap-3 mt-6">
+              <a id="heroCTA" href="#final-reco" class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white px-5 py-3 rounded-xl shadow-elevated transition">
+                <i class="fa-solid fa-check-circle"></i>
+                查看推荐
+              </a>
+              <a href="#table" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-3 rounded-xl transition">
+                <i class="fa-solid fa-table"></i>
+                跳转对比表
+              </a>
+            </div>
+            <div id="heroStats" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6">
+                <div class="p-4 rounded-xl bg-white/10">
+                  <div class="text-sm text-white/70">分析产品</div>
+                  <div class="text-xl font-bold">6</div>
+                </div>
+                <div class="p-4 rounded-xl bg-white/10">
+                  <div class="text-sm text-white/70">关键维度</div>
+                  <div class="text-xl font-bold">4</div>
+                </div>
+                <div class="p-4 rounded-xl bg-white/10">
+                  <div class="text-sm text-white/70">推荐方案</div>
+                  <div class="text-xl font-bold">3</div>
+                </div></div>
+          </div>
+          <div class="relative">
+            <div class="absolute -top-6 -left-6 h-24 w-24 rounded-2xl bg-primary-500/20 blur-2xl"></div>
+            <div class="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-emerald-400/20 blur-3xl"></div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-elevated space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-white/80">优先级参考</span>
+                <span id="heroPriorityBadge" class="badge bg-emerald-500/20 text-emerald-200">
+                  <i class="fa-solid fa-signal mr-2"></i>可自定义
+                </span>
+              </div>
+              <div id="heroProgress" class="space-y-4"></div>
+              <div id="heroNote" class="pt-2 text-xs text-white/60">
+                文案与数据均由 reportData 配置。模板不预设行业术语。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 需求拆解与信息指引（完全自定义内容） -->
+    <section id="needs" class="py-14 sm:py-16 lg:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-8">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">需求拆解与信息指引</h2>
+          <span class="tag"><i class="fa-solid fa-diagram-project text-primary-600"></i> 自定义维度</span>
+        </div>
+        <div id="needDimensions" class="grid md:grid-cols-3 lg:grid-cols-5 gap-5">
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="font-semibold">预算约束</div>
+              </div>
+              <p class="text-slate-600 text-sm leading-relaxed">在预算范围内选择最优配置，平衡性能、配置和价格</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-cogs"></i>
+                </div>
+                <div class="font-semibold">功能性能</div>
+              </div>
+              <p class="text-slate-600 text-sm leading-relaxed">产品核心功能的实现程度和性能表现</p>
+            </div></div>
+        <div class="mt-10 grid lg:grid-cols-2 gap-6">
+          <div id="knowledgeBlock" class="p-6 rounded-2xl bg-white shadow-soft border border-slate-200"></div>
+          <div id="flowBlock" class="p-6 rounded-2xl bg-white shadow-soft border border-slate-200"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 决策因素 -->
+    <section id="kpis" class="py-10 sm:py-12 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-6">核心决策因素</h2>
+        <div id="factorCards" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-cogs"></i>
+                </div>
+                <div class="font-semibold">核心功能</div>
+              </div>
+              <p class="text-slate-600 text-sm mt-2">产品主要功能的实现程度和性能表现</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="font-semibold">品质水平</div>
+              </div>
+              <p class="text-slate-600 text-sm mt-2">产品的材质、工艺和整体质量水平</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="font-semibold">性价比</div>
+              </div>
+              <p class="text-slate-600 text-sm mt-2">价格与配置的平衡关系，物有所值程度</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+                  <i class="fa-solid fa-home"></i>
+                </div>
+                <div class="font-semibold">适用性</div>
+              </div>
+              <p class="text-slate-600 text-sm mt-2">产品对用户需求的匹配程度和使用便利性</p>
+            </div></div>
+      </div>
+    </section>
+
+    <!-- 可视化对比（按配置渲染，支持 bar/radar） -->
+    <section id="charts" class="py-10 sm:py-12 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">可视化对比</h2>
+          <span class="text-sm text-slate-600">图表内容按配置映射产品属性</span>
+        </div>
+        <div id="chartGrid" class="grid lg:grid-cols-2 gap-8"></div>
+      </div>
+    </section>
+
+    <!-- 综合对比表（动态列 + 展开详情；遵守 hidden 切换规范） -->
+    <section id="table" class="py-12 sm:py-14 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">综合对比表</h2>
+          <div class="flex items-center gap-2 text-slate-600 text-sm">
+            <i class="fa-solid fa-circle-info text-primary-600"></i>
+            点击“查看详情”展开更多信息
+          </div>
+        </div>
+        <div class="overflow-x-auto scrollbar-thin rounded-2xl border border-slate-200 bg-white shadow-soft">
+          <table id="compareTable" class="min-w-full text-sm text-left text-slate-700 table-sticky">
+            <thead id="compareThead" class="text-xs uppercase bg-slate-900 text-white"></thead>
+            <tbody id="compareTbody" class="align-top"></tbody>
+          </table>
+        </div>
+        <div id="tableNotes" class="mt-4 text-xs text-slate-600"></div>
+      </div>
+    </section>
+
+    <!-- 场景化分析（自由命名与内容） -->
+    <section id="scenarios" class="py-12 sm:py-14 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">场景化分析</h2>
+          <span class="tag"><i class="fa-solid fa-grid-2"></i> 可选模块</span>
+        </div>
+        <div id="scenarioGrid" class="grid lg:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+
+    <!-- 淘汰/弱推荐说明（可选） -->
+    <section id="elimination" class="py-12 sm:py-14 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">说明</h2>
+          <span class="tag"><i class="fa-solid fa-list-check"></i> 决策透明</span>
+        </div>
+        <div id="eliminationGrid" class="grid lg:grid-cols-2 gap-6"></div>
+      </div>
+    </section>
+
+    <!-- 最终推荐（卡片式，可配置数量与结构） -->
+    <section id="final-reco" class="py-12 sm:py-14 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">最终推荐</h2>
+          <a href="#top" class="text-primary-600 hover:text-primary-800 text-sm inline-flex items-center gap-2">
+            <i class="fa-solid fa-arrow-up"></i> 返回顶部
+          </a>
+        </div>
+        <div id="recommendGrid" class="grid lg:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div>
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-emerald-500 text-white grid place-items-center shadow">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="font-semibold" id="footerBrand">智能商品推荐报告</div>
+          </div>
+          <p class="text-sm text-slate-600 mt-2" id="footerDesc">模板基于配置渲染，适配多品类、多参数与多数量产品。</p>
+        </div>
+        <div>
+          <div class="font-semibold mb-2">快速跳转</div>
+          <div id="footerQuicklinks" class="grid grid-cols-2 gap-2 text-sm"><a href="#needs" class="text-primary-700">需求分析</a><a href="#table" class="text-primary-700">产品对比</a><a href="#scenarios" class="text-primary-700">场景分析</a><a href="#final-reco" class="text-primary-700">推荐方案</a></div>
+        </div>
+        <div>
+          <div class="font-semibold mb-2">说明</div>
+          <p id="footerNote" class="text-sm text-slate-600">如参数缺失，将显示“参数缺失”。</p>
+        </div>
+      </div>
+      <div class="text-xs text-slate-500 mt-6">© 2025 通用模板 · 可复用</div>
+    </div>
+  </footer>
+
+  <button id="toTop" class="fixed bottom-5 right-5 h-11 w-11 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-elevated hidden" aria-label="返回顶部">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // ================== 配置数据（通用占位示例；可完全替换） ==================
+    const reportData = {
+      meta: {
+        title: "通用购物决策报告模板 v2",
+        brandTitle: "决策报告模板",
+        brandSub: "通用 · 可配置",
+        footerBrand: "决策报告模板",
+        footerDesc: "以统一结构渲染多种报告形态。",
+        footerNote: "说明文本可自定义。"
+      },
+      nav: [
+        { id: "needs", label: "需求分析" },
+        { id: "kpis", label: "决策因素" },
+        { id: "charts", label: "可视化对比" },
+        { id: "table", label: "对比表" },
+        { id: "scenarios", label: "场景分析" },
+        { id: "elimination", label: "说明" },
+        { id: "final-reco", label: "最终推荐" }
+      ],
+      hero: {
+        title: "通用购物决策报告（示例数据）",
+        subtitle: "此处为中性文案。请通过配置修改标题、副标题、徽章与进度条。",
+        chips: [
+          { icon: "fa-gear", text: "可配置" },
+          { icon: "fa-code", text: "自包含" }
+        ],
+        cta: { href: "#final-reco", text: "查看推荐" },
+        stats: [
+          { label: "候选数", value: "3" },
+          { label: "指标数", value: "4" },
+          { label: "图表", value: "2" },
+          { label: "模块", value: "7" }
+        ],
+        priorityBadge: { text: "示例徽章", icon: "fa-signal" },
+        progressBars: [
+          { label: "维度A", value: 80, color: "bg-emerald-400" },
+          { label: "维度B", value: 65, color: "bg-primary-500" }
+        ],
+        note: "进度条与徽章均可删除或扩展。"
+      },
+      graphInsights: {
+        dimensions: [
+          { icon: "fa-circle", title: "目标定义", description: "此处放置目标与范围描述（可自定义）。" },
+          { icon: "fa-circle", title: "评估维度", description: "此处放置评估维度列表（可自定义）。" },
+          { icon: "fa-circle", title: "使用环境", description: "此处放置环境/频率/约束（可自定义）。" },
+          { icon: "fa-circle", title: "预算/成本", description: "此处放置预算与成本构成（可自定义）。" },
+          { icon: "fa-circle", title: "其他要求", description: "此处放置特殊要求（可自定义）。" }
+        ],
+        knowledge: {
+          title: "信息指引（可选）",
+          points: [
+            { badge: "口径一致", text: "同一指标请保持单位/口径一致。" },
+            { badge: "数据缺失", text: "缺失项显示“参数缺失”，不做推断。" },
+            { badge: "指标解读", text: "按需添加简短解读与注意事项。" }
+          ]
+        },
+        flow: {
+          title: "流程提示（可选）",
+          notes: [
+            "定义目标与边界",
+            "收集信息与筛选",
+            "对比评估与排序",
+            "决策与落地"
+          ]
+        }
+      },
+      decisionFactors: [
+        { icon: "fa-cubes", title: "维度一", description: "请替换为你的因素说明。" },
+        { icon: "fa-cubes", title: "维度二", description: "请替换为你的因素说明。" },
+        { icon: "fa-cubes", title: "维度三", description: "请替换为你的因素说明。" },
+        { icon: "fa-cubes", title: "维度四", description: "请替换为你的因素说明。" }
+      ],
+      // 产品：任意数量、任意属性；attributes 为自由键值对
+      products: [
+        {
+          id: "item-a",
+          name: "示例A",
+          price: 100,
+          currency: "CNY",
+          type: "类别X",
+          tags: ["标签1", "标签2"],
+          highlights: ["亮点A1", "亮点A2"],
+          attributes: { "指标一": 80, "指标二": 20, "指标三": 50, "描述": "文本信息" },
+          details: { pros: ["优点A"], cons: ["缺点A"], notes: ["备注A"] }
+        },
+        {
+          id: "item-b",
+          name: "示例B",
+          price: 120,
+          currency: "CNY",
+          type: "类别Y",
+          tags: ["标签2"],
+          highlights: ["亮点B1"],
+          attributes: { "指标一": 60, "指标二": 40, "指标三": null, "描述": "文本信息" },
+          details: { pros: ["优点B"], cons: ["缺点B"], notes: ["备注B"] }
+        },
+        {
+          id: "item-c",
+          name: "示例C",
+          price: 90,
+          currency: "CNY",
+          type: "类别X",
+          tags: [],
+          highlights: [],
+          attributes: { "指标一": 75, "指标二": 30, "描述": null },
+          details: { pros: [], cons: [], notes: [] }
+        }
+      ],
+      // 图表：可配置多个；metricKey 或 metricKeys（radar）
+      charts: [
+        { id: "chart-a", title: "指标一对比", note: "", type: "bar", metricKey: "指标一", unit: "", suggestedMax: 100, stepSize: 20 },
+        { id: "chart-b", title: "指标二对比（数值越小越好）", type: "bar", metricKey: "指标二", unit: "", suggestedMax: 100, stepSize: 20, reverse: true }
+        // 示例：雷达图（多指标）
+        // { id: "chart-r", title: "综合雷达", type: "radar", metricKeys: ["指标一","指标二","指标三"] }
+      ],
+      // 对比表：columns可省略（自动并集），可配置高低优先用于着色
+      table: {
+        title: "全量参数对比",
+        notes: ["缺失项显示“参数缺失”。", "点击“查看详情”展开更多信息。"],
+        columns: null,
+        highlightRules: {
+          // 字段名: 'higher' | 'lower'，仅对数值起作用；未指定的字段不着色
+          "指标一": "higher",
+          "指标二": "lower",
+          "指标三": "higher"
+        },
+        actions: { showDetail: true, label: "查看详情" }
+      },
+      // 场景/说明/推荐：均为可选
+      scenarios: [
+        { icon: "fa-square", title: "场景示意一", bullets: ["要点1", "要点2"] },
+        { icon: "fa-square", title: "场景示意二", bullets: ["要点A", "要点B"] }
+      ],
+      elimination: [
+        { title: "说明示意一", level: "note", icon: "fa-info", bullets: ["说明点1"] },
+        { title: "说明示意二", level: "warning", icon: "fa-triangle-exclamation", bullets: ["说明点2"] }
+      ],
+      recommendations: [
+        {
+          title: "方案一",
+          badge: { text: "推荐", tone: "primary", icon: "fa-thumbs-up" },
+          productId: "item-a",
+          fit: "适配条件（可自定义）",
+          reasons: ["理由1", "理由2"],
+          tradeoffs: ["妥协点X"]
+        },
+        {
+          title: "方案二",
+          badge: { text: "可选", tone: "amber", icon: "fa-star" },
+          productId: "item-b",
+          fit: "适配条件（可自定义）",
+          reasons: ["理由A"],
+          tradeoffs: ["妥协点Y"]
+        }
+      ]
+    };
+
+    // ================== 工具函数 ==================
+    const $ = (sel, scope = document) => scope.querySelector(sel);
+    const $$ = (sel, scope = document) => Array.from(scope.querySelectorAll(sel));
+    const isNum = (v) => typeof v === 'number' && !isNaN(v);
+    const toNumber = (val) => {
+      if (val == null) return null;
+      if (typeof val === 'number') return val;
+      const n = parseFloat(String(val).replace(/[^\d.-]/g, ''));
+      return isNaN(n) ? null : n;
+    };
+    const fmt = {
+      currency: (v, currency = "CNY") => {
+        try {
+          return new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(v);
+        } catch { return `${v} ${currency}`; }
+      },
+      text: (v) => (v ?? '参数缺失'),
+      num: (v) => isNum(v) ? String(v) : (v ?? '参数缺失')
+    };
+    const iconHtml = (i) => `<i class="fa-solid ${i}"></i>`;
+    const palette = (i) => ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f43f5e'][i % 8];
+
+    // ================== 导航 ==================
+    function buildNav(items = []) {
+      $('#desktopNav').innerHTML = items.map(n => `<a href="#${n.id}" class="hover:text-primary-700 transition-colors">${n.label}</a>`).join('');
+      $('#mobileNav').innerHTML = items.map(n => `<a href="#${n.id}" class="block py-2">${n.label}</a>`).join('');
+      $('#footerQuicklinks').innerHTML = items.map(n => `<a href="#${n.id}" class="text-primary-700">${n.label}</a>`).join('');
+    }
+
+    // ================== Hero ==================
+    function renderHero(hero = {}) {
+      $('#heroTitle').textContent = hero.title || '通用购物决策报告';
+      $('#heroSubtitle').textContent = hero.subtitle || '';
+      $('#heroChips').innerHTML = (hero.chips || []).map(c => `<span class="chip"><i class="fa-solid ${c.icon || 'fa-circle'} text-primary-300"></i>${c.text || ''}</span>`).join('');
+      $('#heroStats').innerHTML = (hero.stats || []).map(s => `
+        <div class="p-4 rounded-xl bg-white/10">
+          <div class="text-sm text-white/70">${s.label || ''}</div>
+          <div class="text-xl font-bold">${s.value || ''}</div>
+        </div>
+      `).join('');
+      if (hero.cta?.href && hero.cta?.text) {
+        const cta = $('#heroCTA');
+        cta.href = hero.cta.href;
+        cta.innerHTML = `<i class="fa-solid fa-check-circle"></i>${hero.cta.text}`;
+      }
+      const badge = hero.priorityBadge;
+      if (badge) $('#heroPriorityBadge').innerHTML = `<i class="fa-solid ${badge.icon || 'fa-signal'} mr-2"></i>${badge.text || ''}`;
+      $('#heroProgress').innerHTML = (hero.progressBars || []).map(b => `
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-white/80">${b.label || ''}</span>
+            <span class="font-semibold">${isNum(b.value) ? b.value : 0}%</span>
+          </div>
+          <div class="w-full bg-white/10 rounded-full h-2">
+            <div class="${b.color || 'bg-primary-500'} h-2 rounded-full" style="width:${isNum(b.value) ? b.value : 0}%"></div>
+          </div>
+        </div>
+      `).join('');
+      $('#heroNote').textContent = hero.note || $('#heroNote').textContent;
+    }
+
+    // ================== 需求与信息指引 ==================
+    function renderNeeds(ins = {}) {
+      $('#needDimensions').innerHTML = (ins.dimensions || []).map(d => `
+        <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+              <i class="fa-solid ${d.icon || 'fa-circle'}"></i>
+            </div>
+            <div class="font-semibold">${d.title || ''}</div>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed">${d.description || ''}</p>
+        </div>
+      `).join('');
+
+      const k = ins.knowledge;
+      $('#knowledgeBlock').innerHTML = k ? `
+        <div class="flex items-center gap-3 mb-3">
+          <div class="h-9 w-9 rounded-lg bg-primary-100 text-primary-700 grid place-items-center">
+            <i class="fa-solid fa-note-sticky"></i>
+          </div>
+          <div class="font-semibold">${k.title || ''}</div>
+        </div>
+        <ul class="space-y-3 text-slate-700 text-sm leading-relaxed">
+          ${(k.points || []).map(p => `
+            <li><span class="badge bg-primary-100 text-primary-700 mr-2">${p.badge || ''}</span>${p.text || ''}</li>
+          `).join('')}
+        </ul>
+      ` : '';
+
+      const flow = ins.flow;
+      $('#flowBlock').innerHTML = flow ? `
+        <div class="flex items-center gap-3 mb-3">
+          <div class="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-700 grid place-items-center">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div class="font-semibold">${flow.title || ''}</div>
+        </div>
+        <div class="space-y-3 text-slate-700 text-sm leading-relaxed">
+          ${(flow.notes || []).map(n => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200">${n}</div>`).join('')}
+        </div>
+      ` : '';
+    }
+
+    // ================== 决策因素 ==================
+    function renderFactors(factors = []) {
+      $('#factorCards').innerHTML = factors.map(f => `
+        <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-primary-100 text-primary-700 grid place-items-center">
+              <i class="fa-solid ${f.icon || 'fa-circle'}"></i>
+            </div>
+            <div class="font-semibold">${f.title || ''}</div>
+          </div>
+          <p class="text-slate-600 text-sm mt-2">${f.description || ''}</p>
+        </div>
+      `).join('');
+    }
+
+    // ================== 图表 ==================
+    const chartsMap = new Map();
+    function renderCharts(charts = [], products = []) {
+      const grid = $('#chartGrid');
+      grid.innerHTML = charts.map((c, idx) => `
+        <div class="p-5 rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-semibold">${c.title || ''}</div>
+            <div class="tag"><i class="fa-solid fa-chart-simple text-primary-700"></i> ${(c.type || 'bar').toUpperCase()}</div>
+          </div>
+          <canvas id="${c.id || ('chart-'+idx)}" height="260"></canvas>
+          ${c.note ? `<div class="text-xs text-slate-600 mt-3">${c.note}</div>` : ''}
+        </div>
+      `).join('');
+
+      charts.forEach((c, idx) => {
+        const id = c.id || ('chart-'+idx);
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+
+        if (c.type === 'radar' && Array.isArray(c.metricKeys)) {
+          const labels = c.metricKeys;
+          const datasets = products.map((p, i) => {
+            const color = palette(i);
+            const data = labels.map(k => {
+              const raw = (p.attributes || {})[k] ?? p[k];
+              const n = toNumber(raw);
+              return isNaN(n) ? 0 : n;
+            });
+            return {
+              label: p.name,
+              data,
+              borderColor: color,
+              backgroundColor: color + '33',
+              pointBackgroundColor: color
+            };
+          });
+          chartsMap.set(id, new Chart(ctx, {
+            type: 'radar',
+            data: { labels, datasets },
+            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { r: { beginAtZero: true } } }
+          }));
+          return;
+        }
+
+        // 默认柱状
+        const labels = products.map(p => p.name);
+        const values = products.map(p => {
+          const raw = (p.attributes || {})[c.metricKey] ?? p[c.metricKey];
+          const n = toNumber(raw);
+          return isNaN(n) ? null : n;
+        });
+        const bg = products.map((_, i) => palette(i));
+        chartsMap.set(id, new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets: [{ label: c.title || '指标', data: values, backgroundColor: bg, borderRadius: 8 }] },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const v = ctx.raw;
+                    if (v === null) return '参数缺失';
+                    return c.unit ? `${v} ${c.unit}` : String(v);
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                suggestedMax: c.suggestedMax ?? undefined,
+                ticks: { stepSize: c.stepSize ?? undefined },
+                reverse: !!c.reverse // 若越小越好，可启用反向坐标
+              },
+              x: { ticks: { display: false } }
+            }
+          }
+        }));
+      });
+    }
+
+    // ================== 对比表（动态列 + 详情展开） ==================
+    function buildTableColumns(cfg, products) {
+      if (Array.isArray(cfg?.columns) && cfg.columns?.length) return cfg.columns;
+      // 自动：名称、价格、品类 + 属性并集（最多 24 列可调）
+      const attrKeys = new Set();
+      products.forEach(p => { if (p.attributes) Object.keys(p.attributes).forEach(k => attrKeys.add(k)); });
+      const base = [
+        { key: "name", label: "商品", source: "name" },
+        { key: "price", label: "价格", source: "price", formatter: "currency" },
+        { key: "type", label: "品类", source: "type" }
+      ];
+      const attrs = Array.from(attrKeys).slice(0, 24).map(k => ({ key: k, label: k, sourceAttr: k }));
+      return [...base, ...attrs];
+    }
+
+    function valueBadge(val, field, rules) {
+      const n = toNumber(val);
+      if (!isNum(n)) return null;
+      const rule = rules?.[field]; // 'higher' | 'lower'
+      if (!rule) return null;
+      // 颜色策略：仅基于阈值划分（可按需替换）
+      const toneGood = 'badge bg-emerald-100 text-emerald-700';
+      const toneMid = 'badge bg-amber-100 text-amber-700';
+      const toneBad = 'badge bg-rose-100 text-rose-700';
+      // 采用相对阈值：无需全局分布，仅根据常规区间
+      if (rule === 'higher') {
+        if (n >= 80) return toneGood;
+        if (n >= 50) return toneMid;
+        return toneBad;
+      } else {
+        if (n <= 20) return toneGood;
+        if (n <= 50) return toneMid;
+        return toneBad;
+      }
+    }
+
+    function renderTable(tableCfg = {}, products = []) {
+      const cols = buildTableColumns(tableCfg, products);
+      const thead = $('#compareThead');
+      const tbody = $('#compareTbody');
+      const colCount = cols.length + 1; // 操作列
+
+      thead.innerHTML = `<tr>${
+        cols.map(c => `<th class="px-4 py-3 whitespace-nowrap">${c.label}</th>`).join('')
+      }<th class="px-4 py-3 whitespace-nowrap">操作</th></tr>`;
+
+      tbody.innerHTML = products.map(p => {
+        const tds = cols.map(c => {
+          let v = null;
+          if (c.sourceAttr) v = p?.attributes?.[c.sourceAttr];
+          else if (c.source) v = p?.[c.source];
+
+          let display = v;
+          if (c.formatter === 'currency') display = (v == null) ? '参数缺失' : fmt.currency(v, p.currency || 'CNY');
+          else if (c.formatter === 'number') display = fmt.num(v);
+          else display = (v == null || v === '') ? '参数缺失' : String(v);
+
+          const badgeClass = valueBadge(v, c.key, tableCfg.highlightRules);
+          const content = badgeClass ? `<span class="${badgeClass}">${display}</span>` : display;
+
+          return `<td class="px-4 py-4">${content}</td>`;
+        }).join('');
+
+        const detailId = `detail-${p.id}`;
+        const opBtn = (tableCfg?.actions?.showDetail !== false)
+          ? `<button class="toggle-detail inline-flex items-center gap-2 text-primary-600 hover:text-primary-800 px-3 py-2 rounded-lg bg-primary-50"
+                data-target="${detailId}">
+                <i class="fa-solid fa-angles-down"></i> ${tableCfg?.actions?.label || '查看详情'}
+             </button>` : '';
+
+        return `
+          <tr class="border-b border-slate-100">
+            ${tds}
+            <td class="px-4 py-4">${opBtn}</td>
+          </tr>
+          <tr id="${detailId}" class="hidden">
+            <td colspan="${colCount}" class="px-4 py-4 bg-slate-50 accordion-enter">
+              <div class="grid lg:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-white border border-slate-200">
+                  <div class="font-semibold mb-2">亮点</div>
+                  <ul class="text-sm text-slate-700 space-y-2">
+                    ${(p.highlights || []).map(h => `<li>• ${h}</li>`).join('') || '<li class="text-slate-500">参数缺失</li>'}
+                  </ul>
+                </div>
+                <div class="p-4 rounded-xl bg-white border border-slate-200">
+                  <div class="font-semibold mb-2">优缺点</div>
+                  <ul class="text-sm text-slate-700 space-y-2">
+                    <li><span class="text-emerald-600">优势：</span>${(p.details?.pros || []).join('；') || '参数缺失'}</li>
+                    <li><span class="text-rose-600">短板：</span>${(p.details?.cons || []).join('；') || '参数缺失'}</li>
+                  </ul>
+                </div>
+                <div class="p-4 rounded-xl bg-white border border-slate-200">
+                  <div class="font-semibold mb-2">备注/说明</div>
+                  <div class="text-sm text-slate-700">${(p.details?.notes || []).join('；') || '参数缺失'}</div>
+                  ${(p.tags && p.tags.length) ? `<div class="mt-3 flex flex-wrap gap-2">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 详情展开/收起（严格使用 hidden 切换；不对 table-row 做高度动画）
+      tbody.addEventListener('click', (e) => {
+        const btn = e.target.closest('.toggle-detail');
+        if (!btn) return;
+        const id = btn.getAttribute('data-target');
+        const row = document.getElementById(id);
+        if (!row) return;
+        row.classList.toggle('hidden');
+        const icon = btn.querySelector('i');
+        if (icon) icon.classList.toggle('fa-angles-up');
+        btn.classList.toggle('bg-primary-100');
+      });
+
+      $('#tableNotes').innerHTML = (tableCfg?.notes || []).map(n => `• ${n}`).join(' ');
+    }
+
+    // ================== 场景/说明/推荐 ==================
+    function renderScenarios(items = []) {
+      $('#scenarioGrid').innerHTML = items.map(s => `
+        <div class="p-6 rounded-2xl bg-white shadow-soft border border-slate-200">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="h-10 w-10 rounded-xl bg-cyan-100 text-cyan-700 grid place-items-center">
+              <i class="fa-solid ${s.icon || 'fa-square'}"></i>
+            </div>
+            <div class="font-semibold">${s.title || ''}</div>
+          </div>
+          <ul class="text-sm text-slate-700 space-y-2">
+            ${(s.bullets || []).map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    function renderElimination(items = []) {
+      $('#eliminationGrid').innerHTML = items.map(i => {
+        let tone = 'bg-slate-100 text-slate-700';
+        if (i.level === 'warning') tone = 'bg-amber-100 text-amber-700';
+        if (i.level === 'danger') tone = 'bg-rose-100 text-rose-700';
+        return `
+          <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-soft">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="h-10 w-10 rounded-xl ${tone} grid place-items-center">
+                <i class="fa-solid ${i.icon || 'fa-circle-info'}"></i>
+              </div>
+              <div class="font-semibold">${i.title || ''}</div>
+            </div>
+            <ul class="text-sm text-slate-700 space-y-2">
+              ${(i.bullets || []).map(b => `<li>${b}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderRecommendations(recos = [], products = []) {
+      const byId = Object.fromEntries(products.map(p => [p.id, p]));
+      const toneMap = {
+        primary: 'bg-primary-100 text-primary-700',
+        emerald: 'bg-emerald-100 text-emerald-700',
+        amber: 'bg-amber-100 text-amber-700',
+        slate: 'bg-slate-100 text-slate-700'
+      };
+      $('#recommendGrid').innerHTML = recos.map(r => {
+        const p = byId[r.productId] || {};
+        const badgeTone = toneMap[r.badge?.tone] || toneMap.primary;
+        return `
+          <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-soft">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-semibold text-lg">${r.title || '推荐方案'}</div>
+              <span class="badge ${badgeTone}"><i class="fa-solid ${r.badge?.icon || 'fa-star'} mr-1"></i>${r.badge?.text || '推荐'}</span>
+            </div>
+            <div class="text-slate-800 font-semibold">推荐：${p.name || '参数缺失'}</div>
+            <ul class="mt-3 text-sm text-slate-700 space-y-2">
+              <li><span class="text-slate-500">适配：</span>${r.fit || '—'}</li>
+              <li><span class="text-slate-500">理由：</span>${(r.reasons || []).join('；') || '—'}</li>
+              <li><span class="text-slate-500">取舍：</span>${(r.tradeoffs || []).join('；') || '—'}</li>
+            </ul>
+            ${p.price ? `<div class="mt-3 text-sm text-slate-600">参考价格：${fmt.currency(p.price, p.currency || 'CNY')}</div>` : ''}
+            ${(p.tags && p.tags.length) ? `<div class="mt-3 flex flex-wrap gap-2">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ================== 报告渲染入口 ==================
+    function renderReport(data) {
+      // 元信息
+      if (data?.meta?.title) document.title = data.meta.title;
+      if (data?.meta?.brandTitle) $('#brandTitle').textContent = data.meta.brandTitle;
+      if (data?.meta?.brandSub) $('#brandSub').textContent = data.meta.brandSub;
+      if (data?.meta?.footerBrand) $('#footerBrand').textContent = data.meta.footerBrand;
+      if (data?.meta?.footerDesc) $('#footerDesc').textContent = data.meta.footerDesc;
+      if (data?.meta?.footerNote) $('#footerNote').textContent = data.meta.footerNote;
+
+      // 导航
+      buildNav(data.nav || []);
+
+      // Hero
+      renderHero(data.hero || {});
+
+      // 需求与信息指引
+      renderNeeds(data.graphInsights || {});
+
+      // 决策因素
+      renderFactors(data.decisionFactors || []);
+
+      // 图表
+      renderCharts(data.charts || [], data.products || []);
+
+      // 对比表
+      renderTable(data.table || {}, data.products || []);
+
+      // 场景/说明/推荐
+      renderScenarios(data.scenarios || []);
+      renderElimination(data.elimination || []);
+      renderRecommendations(data.recommendations || [], data.products || []);
+    }
+
+    // ================== 交互：平滑滚动、菜单、返回顶部、导航显隐 ==================
+    function initInteractions() {
+      document.body.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        if (!href || href === '#') return;
+        const el = document.querySelector(href);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const mobile = document.getElementById('mobileMenu');
+        if (mobile && !mobile.classList.contains('hidden')) mobile.classList.add('hidden');
+      });
+
+      $('#menuBtn')?.addEventListener('click', () => $('#mobileMenu').classList.toggle('hidden'));
+
+      let lastY = window.scrollY;
+      const navbar = document.getElementById('navbar');
+      const toTop = document.getElementById('toTop');
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (y > lastY && y > 120) navbar.classList.add('nav-hidden');
+        else navbar.classList.remove('nav-hidden');
+        lastY = y;
+        if (y > 400) toTop.classList.remove('hidden'); else toTop.classList.add('hidden');
+      });
+      $('#toTop')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    // ================== 启动 ==================
+    document.addEventListener('DOMContentLoaded', () => {
+      initInteractions();
+      // 使用注入的数据而不是硬编码的数据
+      if (window.REPORT_DATA) {
+        renderReport(window.REPORT_DATA);
+      } else {
+        // 如果没有注入数据，使用默认数据
+        renderReport(reportData);
+      }
+    });
+  </script>
+</body>
+</html>
