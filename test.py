@@ -71,7 +71,7 @@ def main():
         # 修复HTML文件
         print("🔍 开始修复HTML文件...")
         
-        result = agent.repair_html('input.html', 'output.html')
+        result = agent.repair_html('input3.html', 'output3.html')
         
         if result["success"]:
             print("✅ HTML修复成功!")

@@ -1,0 +1,449 @@
+2025-08-12 16:02:43,388 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:02:43,389 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:02:55,672 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:02:55,672 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:03:29,576 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:03:29,576 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:03:29,576 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:03:29,748 - INFO - ✅ LLM初始化完成
+2025-08-12 16:03:29,749 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:03:29,749 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:03:29,749 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:03:29,750 - INFO -    内容长度: 53632 字符
+2025-08-12 16:03:29,750 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:03:58,350 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:03:58,361 - INFO - ✅ 大模型分析完成
+2025-08-12 16:03:58,361 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1013: <h4 class=\"font-semibold text-lg mb-2\">核心优...
+2025-08-12 16:03:58,361 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1013: <h4 class=\"font-semibold text-lg mb-2\">核心优势</span>...
+2025-08-12 16:03:58,361 - INFO - ✅ JSON解析成功，发现 0 个错误
+2025-08-12 16:04:11,332 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:04:11,332 - INFO -    输入文件: input.html
+2025-08-12 16:04:11,332 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:04:11,332 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:04:11,332 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:04:11,332 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:04:11,498 - INFO - ✅ LLM初始化完成
+2025-08-12 16:04:11,499 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:04:11,499 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:04:11,499 - INFO - 📖 读取输入文件...
+2025-08-12 16:04:11,499 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:04:11,499 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:04:11,499 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:04:11,499 - INFO -    内容长度: 53632 字符
+2025-08-12 16:04:11,499 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:04:42,013 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:04:42,024 - INFO - ✅ 大模型分析完成
+2025-08-12 16:04:42,024 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Unclosed span tag in '热管理系统' row of comparison table",
+      "location": "Line ~700",
+      "code": "<td><span class=\...
+2025-08-12 16:04:42,024 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Unclosed span tag in '热管理系统' row of comparison table",
+      "location": "Line ~700",
+      "code": "<td><span class=\"paramet...
+2025-08-12 16:04:42,024 - INFO - ✅ JSON解析成功，发现 0 个错误
+2025-08-12 16:04:42,025 - INFO - ✅ 错误分析完成，发现 0 个错误
+2025-08-12 16:04:42,025 - INFO - 🔄 第二步：为每个错误生成diff补丁...
+2025-08-12 16:04:42,025 - INFO - 🔄 第三步：应用所有diff补丁...
+2025-08-12 16:04:42,025 - WARNING - ⚠️ 没有生成任何diff补丁
+2025-08-12 16:05:38,918 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:05:38,918 - INFO -    输入文件: input.html
+2025-08-12 16:05:38,918 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:05:38,918 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:05:38,918 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:05:38,918 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:05:39,084 - INFO - ✅ LLM初始化完成
+2025-08-12 16:05:39,084 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:05:39,084 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:05:39,084 - INFO - 📖 读取输入文件...
+2025-08-12 16:05:39,084 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:05:39,084 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:05:39,084 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:05:39,084 - INFO -    内容长度: 53632 字符
+2025-08-12 16:05:39,085 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:08:33,585 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:08:33,605 - INFO - ✅ 大模型分析完成
+2025-08-12 16:08:33,605 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1013",
+      "details": "Missing closing '>' for s...
+2025-08-12 16:08:33,605 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1013",
+      "details": "Missing closing '>' for span tag ...
+2025-08-12 16:08:33,605 - ERROR - ❌ JSON解析失败: Expecting ',' delimiter: line 374 column 6 (char 14818)
+2025-08-12 16:08:33,605 - ERROR - ❌ HTML错误分析失败: JSON解析失败: Expecting ',' delimiter: line 374 column 6 (char 14818)
+2025-08-12 16:09:48,973 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:09:48,973 - INFO -    输入文件: input.html
+2025-08-12 16:09:48,973 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:09:48,973 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:09:48,973 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:09:48,973 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:09:49,145 - INFO - ✅ LLM初始化完成
+2025-08-12 16:09:49,145 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:09:49,146 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:09:49,146 - INFO - 📖 读取输入文件...
+2025-08-12 16:09:49,146 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:09:49,146 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:09:49,146 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:09:49,146 - INFO -    内容长度: 53632 字符
+2025-08-12 16:09:49,146 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:13:05,459 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:13:05,473 - INFO - ✅ 大模型分析完成
+2025-08-12 16:13:05,473 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for span element",
+      "location": "Line 1003",
+      "details": "Missing closing '>' for spa...
+2025-08-12 16:13:05,473 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for span element",
+      "location": "Line 1003",
+      "details": "Missing closing '>' for span tag in...
+2025-08-12 16:13:05,473 - WARNING - ⚠️ JSON解析失败，尝试修复截断问题...
+2025-08-12 16:13:05,473 - INFO - 🔧 修复后的JSON: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for span element",
+      "location": "Line 1003",
+      "details": "Missing closing '>' for span tag in...
+2025-08-12 16:13:05,473 - INFO - ✅ JSON解析成功，发现 67 个错误
+2025-08-12 16:13:05,473 - INFO - ✅ 错误分析完成，发现 67 个错误
+2025-08-12 16:13:05,473 - INFO - 🔄 第二步：为每个错误生成diff补丁...
+2025-08-12 16:13:05,473 - INFO - 🔄 第三步：应用所有diff补丁...
+2025-08-12 16:13:05,473 - WARNING - ⚠️ 没有生成任何diff补丁
+2025-08-12 16:14:20,881 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:14:20,881 - INFO -    输入文件: input.html
+2025-08-12 16:14:20,881 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:14:20,881 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:14:20,881 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:14:20,881 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:14:21,045 - INFO - ✅ LLM初始化完成
+2025-08-12 16:14:21,046 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:14:21,046 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:14:21,046 - INFO - 📖 读取输入文件...
+2025-08-12 16:14:21,046 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:14:21,046 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:14:21,046 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:14:21,046 - INFO -    内容长度: 53632 字符
+2025-08-12 16:14:21,046 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:14:59,956 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:14:59,967 - INFO - ✅ 大模型分析完成
+2025-08-12 16:14:59,967 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Unclosed span tag in '安全配置对比' section",
+      "location": "Line 1003",
+      "code": "<span>安全配置对比</span>"
+    },
+    ...
+2025-08-12 16:14:59,967 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Unclosed span tag in '安全配置对比' section",
+      "location": "Line 1003",
+      "code": "<span>安全配置对比</span>"
+    },
+    {
+      ...
+2025-08-12 16:14:59,967 - INFO - ✅ JSON解析成功，发现 8 个错误
+2025-08-12 16:14:59,968 - INFO - ✅ 错误分析完成，发现 8 个错误
+2025-08-12 16:14:59,968 - INFO - 🔄 第二步：为每个错误生成diff补丁...
+2025-08-12 16:14:59,968 - INFO -    处理错误 1/8: Unclosed span tag in '安全配置对比' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 1 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 2/8: Unclosed span tag in '核心优势' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 2 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 3/8: Incomplete HTML comment in '综合对比表格' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 3 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 4/8: Unmatched div tag in '场景化分析' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 4 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 5/8: Unmatched div tag in '场景化分析' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 5 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 6/8: Incorrect Chinese characters in '综合对比表格' section
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 6 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 7/8: Incomplete button text in comparison table
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 7 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO -    处理错误 8/8: Incomplete JavaScript variable declaration for bar chart
+2025-08-12 16:14:59,968 - WARNING -    ⚠️ 错误 8 缺少必要信息，跳过
+2025-08-12 16:14:59,968 - INFO - 🔄 第三步：应用所有diff补丁...
+2025-08-12 16:14:59,968 - WARNING - ⚠️ 没有生成任何diff补丁
+2025-08-12 16:30:34,297 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:30:34,297 - INFO -    输入文件: input.html
+2025-08-12 16:30:34,297 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:30:34,297 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:30:34,297 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:30:34,297 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:30:34,471 - INFO - ✅ LLM初始化完成
+2025-08-12 16:30:34,473 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:30:34,473 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:30:34,473 - INFO - 📖 读取输入文件...
+2025-08-12 16:30:34,473 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:30:34,473 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:30:34,473 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:30:34,473 - INFO -    内容长度: 53632 字符
+2025-08-12 16:30:34,473 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:33:38,104 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:33:38,119 - INFO - ✅ 大模型分析完成
+2025-08-12 16:33:38,119 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1003: <h4 class=\"font-semibold text-lg mb-2\">核心优...
+2025-08-12 16:33:38,119 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1003: <h4 class=\"font-semibold text-lg mb-2\">核心优势</span>...
+2025-08-12 16:33:38,119 - WARNING - ⚠️ JSON解析失败，尝试修复截断问题...
+2025-08-12 16:33:38,119 - INFO - 🔧 修复后的JSON: {
+  "errors": [
+    {
+      "type": "Syntax Error",
+      "description": "Incomplete closing tag for 'span' element",
+      "location": "Line 1003: <h4 class=\"font-semibold text-lg mb-2\">核心优势</span>...
+2025-08-12 16:33:38,119 - INFO - ✅ JSON解析成功，发现 76 个错误
+2025-08-12 16:33:38,119 - INFO - ✅ 错误分析完成，发现 76 个错误
+2025-08-12 16:33:38,120 - INFO - 🔄 第二步：为每个错误生成diff补丁...
+2025-08-12 16:33:38,120 - INFO -    处理错误 1/76: Incomplete closing tag for 'span' element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 1 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 2/76: Incomplete closing tag for 'i' element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 2 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 3/76: Duplicate 'py4' class in button element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 3 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 4/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 4 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 5/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 5 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 6/76: Incomplete closing tag for 'section' element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 6 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 7/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 7 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 8/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 8 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 9/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 9 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 10/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 10 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 11/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 11 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 12/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 12 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 13/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 13 缺少修复内容，跳过
+2025-08-12 16:33:38,120 - INFO -    处理错误 14/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,120 - WARNING -    ⚠️ 错误 14 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 15/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 15 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 16/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 16 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 17/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 17 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 18/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 18 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 19/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 19 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 20/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 20 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 21/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 21 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 22/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 22 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 23/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 23 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 24/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 24 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 25/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 25 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 26/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 26 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 27/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 27 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 28/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 28 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 29/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 29 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 30/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 30 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 31/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 31 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 32/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,121 - WARNING -    ⚠️ 错误 32 缺少修复内容，跳过
+2025-08-12 16:33:38,121 - INFO -    处理错误 33/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 33 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 34/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 34 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 35/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 35 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 36/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 36 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 37/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 37 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 38/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 38 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 39/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 39 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 40/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 40 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 41/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 41 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 42/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 42 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 43/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 43 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 44/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 44 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 45/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 45 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 46/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 46 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 47/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 47 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 48/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 48 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 49/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 49 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 50/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 50 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 51/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,122 - WARNING -    ⚠️ 错误 51 缺少修复内容，跳过
+2025-08-12 16:33:38,122 - INFO -    处理错误 52/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 52 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 53/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 53 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 54/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 54 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 55/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 55 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 56/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 56 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 57/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 57 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 58/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 58 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 59/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 59 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 60/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 60 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 61/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 61 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 62/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 62 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 63/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 63 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 64/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 64 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 65/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 65 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 66/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 66 缺少修复内容，跳过
+2025-08-12 16:33:38,123 - INFO -    处理错误 67/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,123 - WARNING -    ⚠️ 错误 67 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 68/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 68 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 69/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 69 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 70/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 70 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 71/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 71 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 72/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 72 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 73/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 73 缺少修复内容，跳过
+2025-08-12 16:33:38,124 - INFO -    处理错误 74/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,124 - WARNING -    ⚠️ 错误 74 缺少修复内容，跳过
+2025-08-12 16:33:38,125 - INFO -    处理错误 75/76: Unmatched closing 'section' element
+2025-08-12 16:33:38,125 - WARNING -    ⚠️ 错误 75 缺少修复内容，跳过
+2025-08-12 16:33:38,125 - INFO -    处理错误 76/76: Unmatched closing 'div' tag
+2025-08-12 16:33:38,125 - WARNING -    ⚠️ 错误 76 缺少修复内容，跳过
+2025-08-12 16:33:38,125 - INFO - 🔄 第三步：应用所有diff补丁...
+2025-08-12 16:33:38,125 - WARNING - ⚠️ 没有生成任何diff补丁
+2025-08-12 16:37:11,342 - INFO - 🔄 开始HTML修复workflow...
+2025-08-12 16:37:11,342 - INFO -    输入文件: input.html
+2025-08-12 16:37:11,342 - INFO -    输出文件: input_repaired_final.html
+2025-08-12 16:37:11,342 - INFO - 🚀 初始化HTML修复Agent...
+2025-08-12 16:37:11,342 - INFO - ✅ Diff工具初始化完成
+2025-08-12 16:37:11,342 - INFO - ✅ 使用硅基流动API: https://api.siliconflow.cn/v1
+2025-08-12 16:37:11,539 - INFO - ✅ LLM初始化完成
+2025-08-12 16:37:11,541 - INFO - ✅ Prompt模板设置完成
+2025-08-12 16:37:11,541 - INFO - 🎉 HTML修复Agent初始化完成！
+2025-08-12 16:37:11,541 - INFO - 📖 读取输入文件...
+2025-08-12 16:37:11,541 - INFO - ✅ 文件读取成功，内容长度: 53632 字符
+2025-08-12 16:37:11,541 - INFO - 🔍 第一步：使用Agent分析HTML错误...
+2025-08-12 16:37:11,541 - INFO - 🔄 开始HTML错误分析...
+2025-08-12 16:37:11,541 - INFO -    内容长度: 53632 字符
+2025-08-12 16:37:11,541 - INFO - 🤖 调用大模型进行HTML错误分析...
+2025-08-12 16:40:31,759 - INFO - Retrying request to /chat/completions in 0.493036 seconds
+2025-08-12 16:40:59,613 - INFO - HTTP Request: POST https://api.siliconflow.cn/v1/chat/completions "HTTP/1.1 200 OK"
+2025-08-12 16:40:59,624 - INFO - ✅ 大模型分析完成
+2025-08-12 16:40:59,624 - INFO - 📝 原始响应: ```json
+{
+  "errors": [
+    {
+      "type": "HTML Syntax Error",
+      "description": "Unclosed span tag in '方案2' section",
+      "location": "Line 1925",
+      "detail": "<h4 class=\"font-semibold te...
+2025-08-12 16:40:59,624 - INFO - 🔍 提取的JSON内容: {
+  "errors": [
+    {
+      "type": "HTML Syntax Error",
+      "description": "Unclosed span tag in '方案2' section",
+      "location": "Line 1925",
+      "detail": "<h4 class=\"font-semibold text-lg mb...
+2025-08-12 16:40:59,624 - INFO - ✅ JSON解析成功，发现 7 个错误
+2025-08-12 16:40:59,624 - INFO - ✅ 错误分析完成，发现 7 个错误
+2025-08-12 16:40:59,624 - INFO - 🔄 第二步：为每个错误生成diff补丁...
+2025-08-12 16:40:59,624 - INFO -    处理错误 1/7: Unclosed span tag in '方案2' section
+2025-08-12 16:40:59,624 - WARNING -    ⚠️ 错误 1 缺少必要信息，跳过
+2025-08-12 16:40:59,624 - INFO -    处理错误 2/7: Missing closing parenthesis in class attribute
+2025-08-12 16:40:59,624 - WARNING -    ⚠️ 错误 2 缺少必要信息，跳过
+2025-08-12 16:40:59,624 - INFO -    处理错误 3/7: Misplaced closing div tag in '场景化分析' section
+2025-08-12 16:40:59,624 - WARNING -    ⚠️ 错误 3 缺少必要信息，跳过
+2025-08-12 16:40:59,624 - INFO -    处理错误 4/7: Invalid Chinese character in JavaScript code
+2025-08-12 16:40:59,624 - WARNING -    ⚠️ 错误 4 缺少必要信息，跳过
+2025-08-12 16:40:59,625 - INFO -    处理错误 5/7: Misplaced text '洞庭湖' in the document
+2025-08-12 16:40:59,625 - WARNING -    ⚠️ 错误 5 缺少必要信息，跳过
+2025-08-12 16:40:59,625 - INFO -    处理错误 6/7: Inconsistent button closing tags
+2025-08-12 16:40:59,625 - WARNING -    ⚠️ 错误 6 缺少必要信息，跳过
+2025-08-12 16:40:59,625 - INFO -    处理错误 7/7: Duplicate class attribute in button
+2025-08-12 16:40:59,625 - WARNING -    ⚠️ 错误 7 缺少必要信息，跳过
+2025-08-12 16:40:59,625 - INFO - 🔄 第三步：应用所有diff补丁...
+2025-08-12 16:40:59,625 - WARNING - ⚠️ 没有生成任何diff补丁
